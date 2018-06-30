@@ -15,7 +15,7 @@ func TestHashCompute(t *testing.T) {
 	for _, tt := range []struct {
 		img1     string
 		img2     string
-		method   func(img image.Image) (*ImageHash, error)
+		method   func(img image.Image) uint64
 		name     string
 		distance int
 	}{
@@ -69,24 +69,10 @@ func TestHashCompute(t *testing.T) {
 			t.Errorf("%s", err)
 		}
 
-		hash1, err := tt.method(img1)
-		if err != nil {
-			t.Errorf("%s", err)
-		}
-		hash2, err := tt.method(img2)
-		if err != nil {
-			t.Errorf("%s", err)
-		}
-
-		dis1, err := hash1.Distance(hash2)
-		if err != nil {
-			t.Errorf("%s", err)
-		}
-
-		dis2, err := hash2.Distance(hash1)
-		if err != nil {
-			t.Errorf("%s", err)
-		}
+		hash1 := tt.method(img1)
+		hash2 := tt.method(img2)
+		dis1 := Distance(hash1, hash2)
+		dis2 := Distance(hash2, hash1)
 
 		if dis1 != dis2 {
 			t.Errorf("Distance should be identical %v vs %v", dis1, dis2)
@@ -98,46 +84,20 @@ func TestHashCompute(t *testing.T) {
 	}
 }
 
-func NilHashComputeTest(t *testing.T) {
-	hash, err := AverageHash(nil)
-	if err == nil {
-		t.Errorf("Error should be got.")
-	}
-	if hash != nil {
-		t.Errorf("Nil hash should be got. but got %v", hash)
-	}
-
-	hash, err = DifferenceHash(nil)
-	if err == nil {
-		t.Errorf("Error should be got.")
-	}
-	if hash != nil {
-		t.Errorf("Nil hash should be got. but got %v", hash)
-	}
-
-	hash, err = PerceptionHash(nil)
-	if err == nil {
-		t.Errorf("Error should be got.")
-	}
-	if hash != nil {
-		t.Errorf("Nil hash should be got. but got %v", hash)
-	}
-}
-
 func BenchmarkDistanceIdentical(b *testing.B) {
-	h1 := &ImageHash{hash: 0xe48ae53c05e502f7}
-	h2 := &ImageHash{hash: 0xe48ae53c05e502f7}
+	h1 := uint64(0xe48ae53c05e502f7)
+	h2 := uint64(0xe48ae53c05e502f7)
 
 	for i := 0; i < b.N; i++ {
-		h1.Distance(h2)
+		Distance(h1, h2)
 	}
 }
 
 func BenchmarkDistanceDifferent(b *testing.B) {
-	h1 := &ImageHash{hash: 0xe48ae53c05e502f7}
-	h2 := &ImageHash{hash: 0x678be53815e510f7} // 8 bits flipped
+	h1 := uint64(0xe48ae53c05e502f7)
+	h2 := uint64(0x678be53815e510f7) // 8 bits flipped
 
 	for i := 0; i < b.N; i++ {
-		h1.Distance(h2)
+		Distance(h1, h2)
 	}
 }

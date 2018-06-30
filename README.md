@@ -3,6 +3,10 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/corona10/goimagehash)](https://goreportcard.com/report/github.com/corona10/goimagehash)
 [![Coverage Status](https://coveralls.io/repos/github/corona10/goimagehash/badge.svg)](https://coveralls.io/github/corona10/goimagehash)
 
+This is a fork of [corona10/goimagehash](https://github.com/corona10/goimagehash). Changes:
+* Somewhat more straightforward API.
+* A tiny bit faster.
+
 # goimagehash
 > Inspired by [imagehash](https://github.com/JohannesBuchner/imagehash)
 
@@ -32,14 +36,14 @@ func main() {
 
         img1, _ := jpeg.Decode(file1)
         img2, _ := jpeg.Decode(file2)
-        hash1, _ := goimagehash.AverageHash(img1)
-        hash2, _ := goimagehash.AverageHash(img2)
-        distance, _ := hash1.Distance(hash2)
+        hash1 := goimagehash.AverageHash(img1)
+        hash2 := goimagehash.AverageHash(img2)
+        distance := goimagehash.Distance(hash1, hash2)
         fmt.Printf("Distance between images: %v\n", distance)
 
-        hash1, _ = goimagehash.DifferenceHash(img1)
-        hash2, _ = goimagehash.DifferenceHash(img2)
-        distance, _ = hash1.Distance(hash2)
+        hash1 = goimagehash.DifferenceHash(img1)
+        hash2 = goimagehash.DifferenceHash(img2)
+        distance = goimagehash.Distance(hash1, hash2)
         fmt.Printf("Distance between images: %v\n", distance)
 }
 ```
